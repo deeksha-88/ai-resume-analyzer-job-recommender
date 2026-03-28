@@ -81,11 +81,13 @@ const AnalysisDashboard = ({ result }: AnalysisDashboardProps) => {
             <AlertTriangle className="w-6 h-6 text-amber-400 mb-3" />
             <h3 className="font-semibold text-foreground mb-3">Missing Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {result.missingSkills.map((skill) => (
+              {result.missingSkills.length > 0 ? result.missingSkills.map((skill) => (
                 <span key={skill} className="px-3 py-1 rounded-full bg-destructive/20 text-destructive text-xs font-medium">
                   {skill}
                 </span>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">Great job! No missing skills detected.</p>
+              )}
             </div>
           </motion.div>
         </div>
