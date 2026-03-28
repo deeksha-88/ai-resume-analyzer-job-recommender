@@ -60,23 +60,6 @@ const OptimizedResume = ({ sections, originalText }: OptimizedResumeProps) => {
     }
   };
 
-  const buildResumeContent = (s: OptimizedResumeSections, original: string): string => {
-    let html = '<h1>Optimized Resume</h1>';
-    html += '<h2>Professional Summary</h2>';
-    html += `<p>${s.summary}</p>`;
-    html += '<h2>Skills</h2><div class="skills">';
-    s.skills.forEach((skill) => { html += `<span class="skill-tag">${skill}</span>`; });
-    html += '</div>';
-    html += '<h2>Experience Highlights</h2><ul>';
-    s.experience.forEach((exp) => { html += `<li>${exp}</li>`; });
-    html += '</ul>';
-    html += '<div class="keywords"><h2>ATS Keywords to Include</h2><div class="skills">';
-    s.keywords.forEach((kw) => { html += `<span class="skill-tag">${kw}</span>`; });
-    html += '</div></div>';
-    html += '<h2>Original Resume</h2>';
-    html += `<div class="original">${original}</div>`;
-    return html;
-  };
 
   return (
     <section id="optimized-resume" className="py-16 px-4">
