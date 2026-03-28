@@ -46,24 +46,28 @@ const SuccessRoadmap = ({ roadmap }: SuccessRoadmapProps) => {
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">{step.explanation}</p>
 
-                  <div className="space-y-2">
-                    {step.resources.map((res, j) => (
-                      <a
-                        key={j}
-                        href={res.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors group"
-                      >
-                        <Map className="w-4 h-4 text-primary shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{res.title}</p>
-                          <p className="text-xs text-muted-foreground">{res.platform}</p>
-                        </div>
-                        <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                      </a>
-                    ))}
-                  </div>
+                  {step.resources.length > 0 ? (
+                    <div className="space-y-2">
+                      {step.resources.map((res, j) => (
+                        <a
+                          key={j}
+                          href={res.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 rounded-lg bg-secondary hover:bg-secondary/80 transition-colors group"
+                        >
+                          <Map className="w-4 h-4 text-primary shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground truncate">{res.title}</p>
+                            <p className="text-xs text-muted-foreground">{res.platform}</p>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No resources available for this step.</p>
+                  )}
                 </div>
               </motion.div>
             ))}

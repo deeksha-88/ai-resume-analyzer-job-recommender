@@ -81,11 +81,13 @@ const AnalysisDashboard = ({ result }: AnalysisDashboardProps) => {
             <AlertTriangle className="w-6 h-6 text-amber-400 mb-3" />
             <h3 className="font-semibold text-foreground mb-3">Missing Skills</h3>
             <div className="flex flex-wrap gap-2">
-              {result.missingSkills.map((skill) => (
+              {result.missingSkills.length > 0 ? result.missingSkills.map((skill) => (
                 <span key={skill} className="px-3 py-1 rounded-full bg-destructive/20 text-destructive text-xs font-medium">
                   {skill}
                 </span>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">Great job! No missing skills detected.</p>
+              )}
             </div>
           </motion.div>
         </div>
@@ -145,7 +147,7 @@ const AnalysisDashboard = ({ result }: AnalysisDashboardProps) => {
             <h3 className="font-semibold text-foreground mb-4">Match vs Gap</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}%`} labelLine={{ stroke: 'hsl(210 40% 96%)' }}>
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}%`} labelLine={{ stroke: 'hsl(210 40% 96%)' }} style={{ fontSize: 13 }} fill="hsl(210 40% 96%)">
                   <Cell fill="#6366f1" />
                   <Cell fill="#374151" />
                 </Pie>
