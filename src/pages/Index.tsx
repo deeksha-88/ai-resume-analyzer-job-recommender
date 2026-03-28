@@ -9,6 +9,42 @@ import OptimizedResume from '@/components/OptimizedResume';
 import CareerChatbot from '@/components/CareerChatbot';
 import type { AnalysisResult } from '@/types/analysis';
 
+/** Safely convert any value to a string (handles objects the AI may return) */
+const toStr = (v: unknown): string => {
+  if (typeof v === 'string') return v;
+  if (v && typeof v === 'object') return Object.values(v).join(' — ');
+  return String(v ?? '');
+};
+
+/** Normalize AI response so every field that should be a string[] is a string[] */
+const normalizeResult = (r: AnalysisResult): AnalysisResult => ({
+  ...r,
+  extractedSkills: (r.extractedSkills ?? []).map(toStr),
+  requiredSkills: (r.requiredSkills ?? []).map(toStr),
+  missingSkills: (r.missingSkills ?? []).map(toStr),
+  suggestions: (r.suggestions ?? []).map(toStr),
+  salaryInsights: {
+    ...r.salaryInsights,
+    factors: (r.salaryInsights?.factors ?? []).map(toStr),
+  },
+  roadmap: (r.roadmap ?? []).map((step) => ({
+    ...step,
+    skill: toStr(step.skill),
+    explanation: toStr(step.explanation),
+    resources: (step.resources ?? []).map((res: any) => ({
+      title: toStr(res.title ?? res.project ?? res.name ?? ''),
+      url: typeof res.url === 'string' ? res.url : '#',
+      platform: toStr(res.platform ?? res.source ?? ''),
+    })),
+  })),
+  optimizedResumeSections: {
+    summary: toStr(r.optimizedResumeSections?.summary),
+    skills: (r.optimizedResumeSections?.skills ?? []).map(toStr),
+    experience: (r.optimizedResumeSections?.experience ?? []).map(toStr),
+    keywords: (r.optimizedResumeSections?.keywords ?? []).map(toStr),
+  },
+});
+
 const Index = () => {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [resumeText, setResumeText] = useState('');
@@ -21,7 +57,7 @@ const Index = () => {
   };
 
   const handleAnalysisComplete = (result: AnalysisResult, text: string) => {
-    setAnalysisResult(result);
+    setAnalysisResult(normalizeResult(result));
     setResumeText(text);
     setTimeout(() => scrollTo(resultsRef), 100);
   };
