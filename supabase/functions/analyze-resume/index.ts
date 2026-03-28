@@ -23,6 +23,7 @@ serve(async (req) => {
     const systemPrompt = `You are an expert resume analyzer and career advisor. Analyze the given resume against the job description and return a JSON response with the following structure. Be thorough and specific.
 
 IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no extra text.
+ALL string arrays must contain only plain strings, NOT objects.
 
 {
   "isValidResume": true/false,
@@ -55,20 +56,21 @@ IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no extra text.
     }
   ],
   "optimizedResumeSections": {
-    "summary": "Improved professional summary",
-    "skills": ["optimized skill list"],
-    "experience": ["improved bullet points"],
+    "summary": "Improved professional summary that merges original content with enhancements",
+    "skills": ["complete merged skill list including original resume skills PLUS recommended new skills"],
+    "experience": ["improved bullet points based on original resume experience"],
     "keywords": ["ATS keywords to add"]
   }
 }
 
-For the roadmap resources, use REAL URLs from these platforms:
-- W3Schools (w3schools.com)
-- YouTube tutorials (youtube.com)
-- MDN Web Docs (developer.mozilla.org)
-- freeCodeCamp (freecodecamp.org)
-- Coursera (coursera.org)
-- Udemy (udemy.com)
+CRITICAL RULES:
+1. missingSkills MUST equal requiredSkills minus extractedSkills. If matchScore < 100, missingSkills MUST NOT be empty.
+2. jobRecommendations MUST always contain at least 3 roles. If no exact match, suggest related roles based on the user's existing skills.
+3. optimizedResumeSections.skills MUST include ALL original resume skills plus any additional recommended skills. Do NOT drop original skills.
+4. optimizedResumeSections.experience MUST be improved versions of the ORIGINAL resume bullets, not generic new ones.
+5. optimizedResumeSections.summary MUST incorporate the user's actual background from their resume.
+6. For roadmap resources, use REAL clickable URLs (not embed URLs) from: YouTube (youtube.com/watch?v=...), W3Schools, MDN, freeCodeCamp, Coursera, Udemy.
+7. Every resource URL must be a normal webpage link that opens in a browser, NOT an embed or iframe URL.
 
 First, validate if the input is actually a resume. Look for typical resume sections like education, skills, experience, projects, contact info. If it doesn't look like a resume, set isValidResume to false.`;
 
