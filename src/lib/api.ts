@@ -2,13 +2,25 @@ import { supabase } from '@/integrations/supabase/client';
 import type { AnalysisResult, ChatMessage } from '@/types/analysis';
 
 export async function analyzeResume(resumeText: string, jobDescription: string): Promise<AnalysisResult> {
-  const { data, error } = await supabase.functions.invoke('analyze-resume', {
-    body: { resumeText, jobDescription },
-  });
+  try {
+    const { data, error } = await supabase.functions.invoke('analyze-resume', {
+      body: { resumeText, jobDescription },
+    });
 
-  if (error) throw new Error(error.message || 'Failed to analyze resume');
-  if (data.error) throw new Error(data.error);
-  return data as AnalysisResult;
+    if (error) {
+      console.error('Edge Function invocation error:', error);
+      throw new Error(error.message || 'Failed to send request to Edge Function');
+    }
+    if (!data) throw new Error('No data returned from analysis');
+    if (data.error) throw new Error(data.error);
+    return data as AnalysisResult;
+  } catch (err: any) {
+    console.error('analyzeResume error:', err);
+    if (err.message?.includes('Failed to send')) {
+      throw new Error('Could not reach the analysis service. Please try again in a moment.');
+    }
+    throw err;
+  }
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/career-chat`;
