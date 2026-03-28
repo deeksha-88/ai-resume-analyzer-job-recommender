@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Download, FileText, Loader2 } from 'lucide-react';
+import { Download, FileText, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { OptimizedResumeSections } from '@/types/analysis';
 
@@ -11,15 +11,12 @@ interface OptimizedResumeProps {
 
 const OptimizedResume = ({ sections, originalText }: OptimizedResumeProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showOriginal, setShowOriginal] = useState(false);
 
   const generatePDF = () => {
     setIsGenerating(true);
-
     try {
-      // Build resume content
-      const content = buildResumeContent(sections);
-
-      // Create a Blob with HTML content for proper formatting
+      const content = buildResumeContent(sections, originalText);
       const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -33,6 +30,7 @@ const OptimizedResume = ({ sections, originalText }: OptimizedResumeProps) => {
   ul { padding-left: 20px; }
   li { margin-bottom: 8px; }
   .keywords { background: #f0fdf4; padding: 16px; border-radius: 8px; margin-top: 16px; }
+  .original { background: #f9fafb; padding: 16px; border-radius: 8px; margin-top: 24px; border: 1px solid #e5e7eb; white-space: pre-wrap; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -54,40 +52,26 @@ ${content}
     }
   };
 
-  const buildResumeContent = (s: OptimizedResumeSections): string => {
+  const buildResumeContent = (s: OptimizedResumeSections, original: string): string => {
     let html = '<h1>Optimized Resume</h1>';
-
     html += '<h2>Professional Summary</h2>';
     html += `<p>${s.summary}</p>`;
-
-    html += '<h2>Skills</h2>';
-    html += '<div class="skills">';
-    s.skills.forEach((skill) => {
-      html += `<span class="skill-tag">${skill}</span>`;
-    });
+    html += '<h2>Skills</h2><div class="skills">';
+    s.skills.forEach((skill) => { html += `<span class="skill-tag">${skill}</span>`; });
     html += '</div>';
-
-    html += '<h2>Experience Highlights</h2>';
-    html += '<ul>';
-    s.experience.forEach((exp) => {
-      html += `<li>${exp}</li>`;
-    });
+    html += '<h2>Experience Highlights</h2><ul>';
+    s.experience.forEach((exp) => { html += `<li>${exp}</li>`; });
     html += '</ul>';
-
-    html += '<div class="keywords">';
-    html += '<h2>ATS Keywords to Include</h2>';
-    html += '<div class="skills">';
-    s.keywords.forEach((kw) => {
-      html += `<span class="skill-tag">${kw}</span>`;
-    });
-    html += '</div>';
-    html += '</div>';
-
+    html += '<div class="keywords"><h2>ATS Keywords to Include</h2><div class="skills">';
+    s.keywords.forEach((kw) => { html += `<span class="skill-tag">${kw}</span>`; });
+    html += '</div></div>';
+    html += '<h2>Original Resume</h2>';
+    html += `<div class="original">${original}</div>`;
     return html;
   };
 
   return (
-    <section className="py-16 px-4">
+    <section id="optimized-resume" className="py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -105,6 +89,23 @@ ${content}
           viewport={{ once: true }}
           className="glass rounded-2xl p-8 space-y-6"
         >
+          {/* Original Resume Toggle */}
+          <div>
+            <button
+              onClick={() => setShowOriginal(!showOriginal)}
+              className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors mb-2"
+            >
+              {showOriginal ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {showOriginal ? 'Hide' : 'Show'} Original Resume
+            </button>
+            {showOriginal && (
+              <div className="bg-secondary rounded-xl p-4 max-h-64 overflow-y-auto">
+                <p className="text-xs text-muted-foreground mb-2 font-semibold uppercase tracking-wide">Your Uploaded Resume</p>
+                <pre className="text-sm text-secondary-foreground whitespace-pre-wrap font-sans">{originalText}</pre>
+              </div>
+            )}
+          </div>
+
           <div>
             <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
               <FileText className="w-4 h-4 text-accent" /> Professional Summary
