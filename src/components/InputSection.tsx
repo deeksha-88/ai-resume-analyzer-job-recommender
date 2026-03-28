@@ -24,6 +24,17 @@ const InputSection = ({ onAnalysisComplete, uploadRef, jobDescRef }: InputSectio
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // ✅ NEW: Resume validation function
+  const isValidResumeText = (text: string) => {
+    const lower = text.toLowerCase();
+
+    const keywords = ['skills', 'education', 'experience', 'projects'];
+
+    const matches = keywords.filter((word) => lower.includes(word));
+
+    return matches.length >= 2; // at least 2 sections required
+  };
+
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
@@ -34,14 +45,27 @@ const InputSection = ({ onAnalysisComplete, uploadRef, jobDescRef }: InputSectio
       return;
     }
 
-    setFile(selectedFile);
     setError('');
 
     try {
       setLoadingMsg('Extracting text from resume...');
       setIsLoading(true);
+
       const text = await extractTextFromFile(selectedFile);
+
+      // ✅ CRITICAL FIX: Validate content BEFORE accepting
+      if (!isValidResumeText(text)) {
+        setError('Please upload a valid resume (must include skills, education, or experience).');
+        setFile(null);
+        setResumeText('');
+        setIsLoading(false);
+        setLoadingMsg('');
+        return;
+      }
+
+      setFile(selectedFile);
       setResumeText(text);
+
       setIsLoading(false);
       setLoadingMsg('');
     } catch (err: any) {
@@ -67,7 +91,7 @@ const InputSection = ({ onAnalysisComplete, uploadRef, jobDescRef }: InputSectio
 
   const handleSubmit = async () => {
     if (!resumeText.trim()) {
-      setError('Please upload a resume first.');
+      setError('Please upload a valid resume first.');
       return;
     }
     if (!jobDescription.trim()) {
@@ -81,13 +105,6 @@ const InputSection = ({ onAnalysisComplete, uploadRef, jobDescRef }: InputSectio
 
     try {
       const result = await analyzeResume(resumeText, jobDescription);
-      
-      if (!result.isValidResume) {
-        setError(result.validationMessage || 'The uploaded file does not appear to be a valid resume. Please upload a document containing education, skills, experience, or projects.');
-        setIsLoading(false);
-        setLoadingMsg('');
-        return;
-      }
 
       onAnalysisComplete(result, resumeText);
     } catch (err: any) {

@@ -74,7 +74,7 @@ CRITICAL RULES:
 
 First, validate if the input is actually a resume. Look for typical resume sections like education, skills, experience, projects, contact info. If it doesn't look like a resume, set isValidResume to false.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.ai-resume-analyzer .dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,

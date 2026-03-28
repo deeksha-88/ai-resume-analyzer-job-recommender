@@ -24,7 +24,7 @@ serve(async (req) => {
 
 Be helpful, specific, and encouraging. Provide actionable advice. If the user shares resume details or asks about specific skills, give tailored recommendations. Keep responses concise but comprehensive. Use markdown formatting for readability.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.ai-resume-analyzer .dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
