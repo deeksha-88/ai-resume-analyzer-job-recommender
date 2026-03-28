@@ -13,10 +13,17 @@ const OptimizedResume = ({ sections, originalText }: OptimizedResumeProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showOriginal, setShowOriginal] = useState(false);
 
+  const mergedResumeText = (() => {
+    const skillsLine = sections.skills.length > 0 ? `\n\nSKILLS (Enhanced): ${sections.skills.join(', ')}` : '';
+    const keywordsLine = sections.keywords.length > 0 ? `\n\nATS KEYWORDS: ${sections.keywords.join(', ')}` : '';
+    const summaryLine = sections.summary ? `\n\nPROFESSIONAL SUMMARY:\n${sections.summary}` : '';
+    const experienceLine = sections.experience.length > 0 ? `\n\nEXPERIENCE HIGHLIGHTS:\n${sections.experience.map(e => `• ${e}`).join('\n')}` : '';
+    return originalText + summaryLine + skillsLine + experienceLine + keywordsLine;
+  })();
+
   const generatePDF = () => {
     setIsGenerating(true);
     try {
-      const content = buildResumeContent(sections, originalText);
       const htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -30,11 +37,12 @@ const OptimizedResume = ({ sections, originalText }: OptimizedResumeProps) => {
   ul { padding-left: 20px; }
   li { margin-bottom: 8px; }
   .keywords { background: #f0fdf4; padding: 16px; border-radius: 8px; margin-top: 16px; }
-  .original { background: #f9fafb; padding: 16px; border-radius: 8px; margin-top: 24px; border: 1px solid #e5e7eb; white-space: pre-wrap; font-size: 13px; }
+  .content { white-space: pre-wrap; font-size: 14px; line-height: 1.7; }
 </style>
 </head>
 <body>
-${content}
+<h1>Optimized Resume</h1>
+<div class="content">${mergedResumeText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
 </body>
 </html>`;
 
