@@ -145,11 +145,11 @@ const AnalysisDashboard = ({ result }: AnalysisDashboardProps) => {
             <h3 className="font-semibold text-foreground mb-4">Match vs Gap</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}%`}>
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} dataKey="value" label={({ name, value }) => `${name}: ${value}%`} labelLine={{ stroke: 'hsl(210 40% 96%)' }}>
                   <Cell fill="#6366f1" />
                   <Cell fill="#374151" />
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: 'hsl(220 25% 10%)', border: '1px solid hsl(220 20% 18%)', borderRadius: '8px', color: 'hsl(210 40% 96%)' }} />
+                <Tooltip contentStyle={{ backgroundColor: 'hsl(220 25% 10%)', border: '1px solid hsl(220 20% 18%)', borderRadius: '8px', color: 'hsl(210 40% 96%)' }} itemStyle={{ color: 'hsl(210 40% 96%)' }} labelStyle={{ color: 'hsl(210 40% 96%)' }} />
               </PieChart>
             </ResponsiveContainer>
           </motion.div>

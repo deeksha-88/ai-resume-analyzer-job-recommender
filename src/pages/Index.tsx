@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import NavigationBar from '@/components/NavigationBar';
 import HeroSection from '@/components/HeroSection';
 import InputSection from '@/components/InputSection';
 import AnalysisDashboard from '@/components/AnalysisDashboard';
@@ -9,14 +10,12 @@ import OptimizedResume from '@/components/OptimizedResume';
 import CareerChatbot from '@/components/CareerChatbot';
 import type { AnalysisResult } from '@/types/analysis';
 
-/** Safely convert any value to a string (handles objects the AI may return) */
 const toStr = (v: unknown): string => {
   if (typeof v === 'string') return v;
   if (v && typeof v === 'object') return Object.values(v).join(' — ');
   return String(v ?? '');
 };
 
-/** Normalize AI response so every field that should be a string[] is a string[] */
 const normalizeResult = (r: AnalysisResult): AnalysisResult => ({
   ...r,
   extractedSkills: (r.extractedSkills ?? []).map(toStr),
@@ -64,23 +63,35 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection
-        onUploadClick={() => scrollTo(uploadRef)}
-        onJobDescClick={() => scrollTo(jobDescRef)}
-      />
+      <NavigationBar hasResults={!!analysisResult} />
 
-      <InputSection
-        onAnalysisComplete={handleAnalysisComplete}
-        uploadRef={uploadRef}
-        jobDescRef={jobDescRef}
-      />
+      <div id="hero">
+        <HeroSection
+          onUploadClick={() => scrollTo(uploadRef)}
+          onJobDescClick={() => scrollTo(jobDescRef)}
+        />
+      </div>
+
+      <div id="upload">
+        <InputSection
+          onAnalysisComplete={handleAnalysisComplete}
+          uploadRef={uploadRef}
+          jobDescRef={jobDescRef}
+        />
+      </div>
 
       {analysisResult && (
         <div ref={resultsRef}>
-          <AnalysisDashboard result={analysisResult} />
-          <JobRecommendations jobs={analysisResult.jobRecommendations} />
+          <div id="analysis">
+            <AnalysisDashboard result={analysisResult} />
+          </div>
+          <div id="job-recommendations">
+            <JobRecommendations jobs={analysisResult.jobRecommendations} />
+          </div>
           <SalaryInsightsSection salary={analysisResult.salaryInsights} />
-          <SuccessRoadmap roadmap={analysisResult.roadmap} />
+          <div id="roadmap">
+            <SuccessRoadmap roadmap={analysisResult.roadmap} />
+          </div>
           <OptimizedResume sections={analysisResult.optimizedResumeSections} originalText={resumeText} />
         </div>
       )}
